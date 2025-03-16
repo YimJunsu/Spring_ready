@@ -1,12 +1,16 @@
 package com.study.springboot.bean;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("member1")
 // Member 클래스를 Bean 으로 등록 하겠다는 의미로 Component 사용
 public class Member {
 	private String name;
 	private String nickname;
+	@Autowired
+    @Qualifier("printerB")
 	private Printer printer;
 	
 	// 생성자

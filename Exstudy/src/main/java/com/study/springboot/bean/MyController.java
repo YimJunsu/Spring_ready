@@ -27,5 +27,5 @@ public class MyController {
 			System.out.println("서로 다른 객체입니다.");
 		} return "어노테이션 사용하기";
 	}
-	
+	// ~ ch01 end
 }
