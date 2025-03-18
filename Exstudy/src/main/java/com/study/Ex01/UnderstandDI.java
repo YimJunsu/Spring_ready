@@ -1,4 +1,4 @@
-package Ex01;
+package com.study.Ex01;
 
 class Member{
 	String name;
