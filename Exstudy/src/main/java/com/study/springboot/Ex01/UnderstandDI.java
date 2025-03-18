@@ -1,4 +1,4 @@
-package com.study.Ex01;
+package com.study.springboot.Ex01;
 
 class Member{
 	String name;

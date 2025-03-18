@@ -8,6 +8,9 @@
 </head>
 <body>
 	<!-- JSP 태그 -->
-	<%out.println("Model : Form 데이터 전달받아 사용하기"); %>
+	<%out.println("#4 : Hello world"); %>
+	<br>
+	당신의 아이디는 ${id} 입니다. <br>
+	당신의 이름은 ${name} 입니다.
 </body>
 </html>

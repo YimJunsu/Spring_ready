@@ -1,4 +1,4 @@
-package com.study.Ex06.mytest;
+package com.study.springboot.Ex06.mytest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller
+//@Controller
 public class Ex06MyContorller {
 	// 두가지 타입의 리턴 방식
 	@RequestMapping("/")

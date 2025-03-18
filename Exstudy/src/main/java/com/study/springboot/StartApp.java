@@ -8,16 +8,16 @@ import com.study.springboot.bean.Member;
 import com.study.springboot.bean.PrinterB;
 
 @SpringBootApplication // 스프링 실행 어노테이션
-public class ExstudyApplication {
+public class StartApp {
 
     private final Member member1;
 
-    ExstudyApplication(Member member1) {
+    StartApp(Member member1) {
         this.member1 = member1;
     }
     public static void main(String[] args) {
         // Spring Boot 애플리케이션 실행
-        ApplicationContext context = SpringApplication.run(ExstudyApplication.class, args);
+        ApplicationContext context = SpringApplication.run(StartApp.class, args);
 		/*
 		 * // 1. IoC 컨테이너 생성 - 과거 IoC 컨테이너를 수동으로 생성 / 현재는 자동, Bean 등록만
 		 * //ApplicationContext context = new
