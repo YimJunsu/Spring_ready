@@ -1,24 +1,41 @@
 package com.study.spring;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.study.spring.jdbc.IMyUserDao;
 
 @Controller
 public class MyController {
+	@Autowired private IMyUserDao iMyUserDao;
+	
 	@RequestMapping("/")
 	public @ResponseBody String root() throws Exception{
-		return "Validator_initBinder (3)";
+		return "MyBatis 사용하기";
 	}
+	
+	@GetMapping("/user")
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	public String userlistPage(Model model) {
+		model.addAttribute("users", iMyUserDao.list());
+		return "userlist";
+	}
+	// ----------------------------------------------- jsp study
 	@RequestMapping("/insertForm")
 	public String insert1() {
 		return "createPage";
 	}
+	
 	@RequestMapping("/create")
 	public String insert2(@ModelAttribute("dto") @Validated ContentDto contentDto, BindingResult result) {
 		String page = "createDonePage";
