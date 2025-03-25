@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<mapper namespace="com.study.spring.jdbc.IMyUserDao">
-    <select id="list" resultType="com.study.spring.jdbc.MyUserDto">
-        SELECT * FROM my_user_table;
-    </select>
-</mapper>
