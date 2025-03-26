@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.JDBCStudy.ISimpleBbsDao;
 import com.example.demo.JDBCStudy.MybatisUserDao;
 import com.example.demo.JDBCStudy.UserDao;
+import com.example.demo.transctionstudy.IBuyTicketService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -29,10 +31,30 @@ public class ViewController {
 	//@Autowired private ISimpleBbsDao iSimpleBbsDao;
 	@Autowired private MybatisUserDao mybatisUserDao;
 	@Autowired private ISimpleBbsSerive bbsSerive;
+	@Autowired private IBuyTicketService buyTicketService;
+	
 	@RequestMapping("/")
 	public @ResponseBody String root() throws Exception{
 		return "mybatis 1";
 	}
+	
+	@RequestMapping("/buy_ticket")
+	public String buy_ticket() {
+		return "buy_ticket";
+	}
+	@RequestMapping("/buy_ticket_card")
+	public String buy_ticket_card(@RequestParam("consumerId") String consumerId, @RequestParam("amount") String amount, @RequestParam("error") String error, Model model) {
+		int nResult = buyTicketService.buy(consumerId, Integer.parseInt(amount), error);
+		
+		model.addAttribute("consumerId", consumerId);
+		model.addAttribute("amount", amount);
+		if(nResult == 1) {
+			return "buy_ticket_end";
+		} else {
+			return "buy_ticket_error";
+		}
+	}
+	
 	// mybatis
 	@GetMapping("/user")
 	public String userlist(Model model) {
