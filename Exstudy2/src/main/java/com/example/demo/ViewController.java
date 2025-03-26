@@ -26,9 +26,9 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ViewController {
 	// DI 주입
 	@Autowired private UserDao userDao;
-	@Autowired private ISimpleBbsDao iSimpleBbsDao;
+	//@Autowired private ISimpleBbsDao iSimpleBbsDao;
 	@Autowired private MybatisUserDao mybatisUserDao;
-	
+	@Autowired private ISimpleBbsSerive bbsSerive;
 	@RequestMapping("/")
 	public @ResponseBody String root() throws Exception{
 		return "mybatis 1";
@@ -43,16 +43,16 @@ public class ViewController {
 	// JDBCtemplate -> mybatis
 	@RequestMapping("/list")
 	public String list(Model model) {
-		model.addAttribute("list",iSimpleBbsDao.listDao());
+		model.addAttribute("list",bbsSerive.list());
 		
-		int nTotalCount = iSimpleBbsDao.articleCount();
+		int nTotalCount = bbsSerive.count();
 		System.out.println("Count : " + nTotalCount);
 		return "/list";
 	}
 	@RequestMapping("/view")
 	public String view(HttpServletRequest httpServletRequest, Model model) {
 		String sId = httpServletRequest.getParameter("id");
-		model.addAttribute("dto",iSimpleBbsDao.viewDao(sId));
+		model.addAttribute("dto",bbsSerive.view(sId));
 		return "/view";
 	}
 	@RequestMapping("/writeform")
@@ -70,7 +70,7 @@ public class ViewController {
 		map.put("item2", sTitle);
 		map.put("item3", sContent);
 		
-		int nResult = iSimpleBbsDao.writeDao(map);
+		int nResult = bbsSerive.write(map);
 		System.out.println("Write : " + nResult);
 		
 		return "redirect:list";
@@ -78,7 +78,7 @@ public class ViewController {
 	@RequestMapping("/delete")
 	public String delete(HttpServletRequest request, Model model) {
 		String sId = request.getParameter("id");
-		int nResult = iSimpleBbsDao.deleteDao(sId);
+		int nResult = bbsSerive.delete(sId);
 		System.out.println("Delete : " + nResult);
 		
 		return "redirect:list";
