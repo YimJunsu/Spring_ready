@@ -1,5 +1,8 @@
 package com.example.demo;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.JDBCStudy.ISimpleBbsDao;
+import com.example.demo.JDBCStudy.MybatisUserDao;
 import com.example.demo.JDBCStudy.UserDao;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,43 +27,69 @@ public class ViewController {
 	// DI 주입
 	@Autowired private UserDao userDao;
 	@Autowired private ISimpleBbsDao iSimpleBbsDao;
+	@Autowired private MybatisUserDao mybatisUserDao;
 	
 	@RequestMapping("/")
 	public @ResponseBody String root() throws Exception{
-		return "redirect:list";
+		return "mybatis 1";
 	}
+	// mybatis
+	@GetMapping("/user")
+	public String userlist(Model model) {
+		model.addAttribute("users", mybatisUserDao.mlist());
+		return "userlist";
+	}
+	
+	// JDBCtemplate -> mybatis
 	@RequestMapping("/list")
 	public String list(Model model) {
 		model.addAttribute("list",iSimpleBbsDao.listDao());
-		return "list";
+		
+		int nTotalCount = iSimpleBbsDao.articleCount();
+		System.out.println("Count : " + nTotalCount);
+		return "/list";
 	}
 	@RequestMapping("/view")
 	public String view(HttpServletRequest httpServletRequest, Model model) {
 		String sId = httpServletRequest.getParameter("id");
 		model.addAttribute("dto",iSimpleBbsDao.viewDao(sId));
-		return "view";
+		return "/view";
 	}
 	@RequestMapping("/writeform")
 	public String writeform() {
-		return "writeform";
+		return "/writeform";
 	}
 	@RequestMapping("/write")
-	public String write(Model model, HttpServletRequest httpServletRequest) {
-		iSimpleBbsDao.writeDao(httpServletRequest.getParameter("writer"), httpServletRequest.getParameter("title"), httpServletRequest.getParameter("content"));
+	public String write(HttpServletRequest request, Model model) {
+		String sName = request.getParameter("writer");
+		String sTitle = request.getParameter("title");
+		String sContent = request.getParameter("content");
+		
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("item1", sName);
+		map.put("item2", sTitle);
+		map.put("item3", sContent);
+		
+		int nResult = iSimpleBbsDao.writeDao(map);
+		System.out.println("Write : " + nResult);
+		
 		return "redirect:list";
 	}
 	@RequestMapping("/delete")
-	public String delete(HttpServletRequest httpServletRequest, Model model) {
-		iSimpleBbsDao.deleteDao(httpServletRequest.getParameter("id"));
+	public String delete(HttpServletRequest request, Model model) {
+		String sId = request.getParameter("id");
+		int nResult = iSimpleBbsDao.deleteDao(sId);
+		System.out.println("Delete : " + nResult);
+		
 		return "redirect:list";
 	}
 	
-	// JDBC 템플릿
-	@GetMapping("/user")
-	public String userlist (Model model) {
-		model.addAttribute("users", userDao.list());
-		return "userlist";
-	}
+//	// JDBC 템플릿
+//	@GetMapping("/user")
+//	public String userlist (Model model) {
+//		model.addAttribute("users", userDao.list());
+//		return "userlist";
+//	}
 	// FORM 유효성
 	@RequestMapping("/insertForm")
 	public String insert1() {

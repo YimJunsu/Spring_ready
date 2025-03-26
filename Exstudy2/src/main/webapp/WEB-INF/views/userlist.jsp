@@ -10,7 +10,7 @@
 </head>
 <body>
 <%
-	out.println("JdbcTemplate : Hello World");
+	out.println("Mybatis : Hello World");
 %>
 <br>
 
