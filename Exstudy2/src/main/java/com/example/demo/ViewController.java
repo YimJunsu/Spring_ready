@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.example.demo.JDBCStudy.ISimpleBbsDao;
 import com.example.demo.JDBCStudy.MybatisUserDao;
 import com.example.demo.JDBCStudy.UserDao;
+import com.example.demo.transctionstudy.BuyAndLogService;
 import com.example.demo.transctionstudy.IBuyTicketService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,11 +32,11 @@ public class ViewController {
 	//@Autowired private ISimpleBbsDao iSimpleBbsDao;
 	@Autowired private MybatisUserDao mybatisUserDao;
 	@Autowired private ISimpleBbsSerive bbsSerive;
-	@Autowired private IBuyTicketService buyTicketService;
-	
+	//@Autowired private IBuyTicketService buyTicketService;
+	@Autowired private BuyAndLogService buyAndLogService;
 	@RequestMapping("/")
 	public @ResponseBody String root() throws Exception{
-		return "mybatis 1";
+		return "Transaction Propagation (4)";
 	}
 	
 	@RequestMapping("/buy_ticket")
@@ -43,25 +44,34 @@ public class ViewController {
 		return "buy_ticket";
 	}
 	@RequestMapping("/buy_ticket_card")
-	public String buy_ticket_card(@RequestParam("consumerId") String consumerId, @RequestParam("amount") String amount, @RequestParam("error") String error, Model model) {
-		int nResult = buyTicketService.buy(consumerId, Integer.parseInt(amount), error);
-		
-		model.addAttribute("consumerId", consumerId);
-		model.addAttribute("amount", amount);
-		if(nResult == 1) {
-			return "buy_ticket_end";
-		} else {
-			return "buy_ticket_error";
-		}
+	public String buy_ticket_card(@RequestParam("consumerid") String consumerid, 
+	                              @RequestParam("amount") String amount, 
+	                              @RequestParam("error") String error, 
+	                              Model model) {
+	    // 서비스 메서드 호출
+	    //int nResult = buyTicketService.buy(consumerid, Integer.parseInt(amount), error);
+		int nResult = buyAndLogService.buy(consumerid, Integer.parseInt(amount), error);
+	    // 디버깅용 로그
+	    System.out.println("Result of buyTicketService.buy: " + nResult);
+
+	    // 모델에 값 추가
+	    model.addAttribute("consumerid", consumerid);
+	    model.addAttribute("amount", amount);
+
+	    // 결과에 따라 다른 페이지로 이동
+	    if (nResult == 1) {
+	        return "buy_ticket_end";
+	    } else {
+	        return "buy_ticket_error";
+	    }
 	}
-	
+
 	// mybatis
 	@GetMapping("/user")
 	public String userlist(Model model) {
 		model.addAttribute("users", mybatisUserDao.mlist());
 		return "userlist";
 	}
-	
 	// JDBCtemplate -> mybatis
 	@RequestMapping("/list")
 	public String list(Model model) {

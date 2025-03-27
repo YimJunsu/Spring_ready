@@ -10,7 +10,7 @@
 
 buy_ticket_end.jsp 입니다. </br>
 
-${consumerId } <br/>
+${consumerid } <br/>
 ${amount } <br/>
 
 </body>
