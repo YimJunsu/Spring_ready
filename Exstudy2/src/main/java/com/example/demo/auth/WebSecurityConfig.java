@@ -11,6 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Configuration
 public class WebSecurityConfig {
 
@@ -21,11 +24,11 @@ public class WebSecurityConfig {
         // HttpSecurity 객체를 사용하여 HTTP 요청에 대한 권한을 설정
     	// 시큐리티 5.x 이상에서는 antMatchers 사용 안함
         http.authorizeHttpRequests()
-                .requestMatchers("/").permitAll()  // 루트 경로("/")는 모두 허용
+        		.requestMatchers("/member/**").hasAnyRole("USER", "ADMIN")  // /member/** 경로는 "USER" 또는 "ADMIN" 역할을 가진 사용자만 접근 허용
+        		.requestMatchers("/admin/**").hasRole("ADMIN")  // /admin/** 경로는 "ADMIN" 역할을 가진 사용자만 접근 허용
+                .requestMatchers("/**").permitAll()  // 루트 경로("/")는 모두 허용
                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()  // 정적 자원(css, js, img)은 모두 허용
                 .requestMatchers("/guest/**").permitAll()  // guest 경로는 모두 허용
-                .requestMatchers("/member/**").hasAnyRole("USER", "ADMIN")  // /member/** 경로는 "USER" 또는 "ADMIN" 역할을 가진 사용자만 접근 허용
-                .requestMatchers("/admin/**").hasRole("ADMIN")  // /admin/** 경로는 "ADMIN" 역할을 가진 사용자만 접근 허용
                 .anyRequest().authenticated();  // 그 외 모든 요청은 인증된 사용자만 접근 가능
         // 로그인 폼 설정: 모든 사용자에게 로그인 페이지 접근 허용
         http.formLogin()
@@ -33,7 +36,6 @@ public class WebSecurityConfig {
         // 로그아웃 설정: 모든 사용자에게 로그아웃 허용
         http.logout()
         		.permitAll();  // 로그아웃 페이지는 모두 허용
-
         return http.build();  // SecurityFilterChain을 반환하여 설정이 적용되도록 합니다.
     }
 //    // 글로벌 인증 설정: 사용자 인증을 메모리 기반으로 설정 -> 스프링 시큐리티 5.X 버전

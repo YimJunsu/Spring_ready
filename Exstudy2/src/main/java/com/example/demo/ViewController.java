@@ -36,9 +36,9 @@ public class ViewController {
 	@Autowired private BuyAndLogService buyAndLogService;
 	@RequestMapping("/")
 	public @ResponseBody String root() throws Exception{
-		return "Transaction Propagation (4)";
+		return "Spring Security";
 	}
-	// 시큐리티
+	// 시큐리티0
 	@RequestMapping("/guest/welcome")
 	public String welcome1() {
 		return "guest/welcome1";
