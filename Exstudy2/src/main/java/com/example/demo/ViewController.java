@@ -38,7 +38,21 @@ public class ViewController {
 	public @ResponseBody String root() throws Exception{
 		return "Transaction Propagation (4)";
 	}
+	// 시큐리티
+	@RequestMapping("/guest/welcome")
+	public String welcome1() {
+		return "guest/welcome1";
+	}
+	@RequestMapping("/member/welcome")
+	public String welcome2() {
+		return "member/welcome2";
+	}
+	@RequestMapping("/admin/welcome")
+	public String welcome3() {
+		return "admin/welcome3";
+	}
 	
+	// 트랜잭션 study
 	@RequestMapping("/buy_ticket")
 	public String buy_ticket() {
 		return "buy_ticket";
