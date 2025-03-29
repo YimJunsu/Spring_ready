@@ -10,13 +10,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+@Slf4j // 디버깅을 위한 어노테이션
 @Configuration
 public class WebSecurityConfig {
-
+	
+	@Autowired AuthenticationFailureHandler authenticationFailureHandler;
+	
     // SecurityFilterChain을 사용하여 Spring Security 설정
     // 시큐리티 5.x 이상에서는 WebSecurityConfigurerAdapter를 확장하지 않고, 필터 체인 방식으로 설정
     @Bean
@@ -34,7 +37,8 @@ public class WebSecurityConfig {
         http.formLogin()
         		.loginPage("/loginForm") // default : /login
         		.loginProcessingUrl("/j_spring_security_check") // 시큐리티 인증 url
-        		.failureUrl("/loginError")  // default : /login?error
+        		// .failureUrl("/loginError")  // default : /login?error
+        		.failureHandler(authenticationFailureHandler)
         		// .defaultSuccessUrl("/")
         		.usernameParameter("j_username") // default : j_username
         		.passwordParameter("j_password") // default : j_password
