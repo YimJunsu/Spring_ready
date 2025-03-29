@@ -4,11 +4,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Welcome</title>
+<title>LoginForm</title>
 </head>
 <body>
+<h1>loginError.jsp</h1>
+로그인 실패하였습니다. <br><p>
 
-welcome : Guest
-
+<a href=loginForm>로그인 페이지로 가기</a>
 </body>
 </html>

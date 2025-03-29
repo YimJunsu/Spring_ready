@@ -38,7 +38,7 @@ public class ViewController {
 	public @ResponseBody String root() throws Exception{
 		return "Spring Security";
 	}
-	// 시큐리티0
+	// 시큐리티
 	@RequestMapping("/guest/welcome")
 	public String welcome1() {
 		return "guest/welcome1";
@@ -51,7 +51,14 @@ public class ViewController {
 	public String welcome3() {
 		return "admin/welcome3";
 	}
-	
+	@RequestMapping("/loginForm")
+	public String loginForm() {
+		return "security/loginForm";
+	}
+	@RequestMapping("/loginError")
+	public String loginError() {
+		return "security/loginError";
+	}
 	// 트랜잭션 study
 	@RequestMapping("/buy_ticket")
 	public String buy_ticket() {

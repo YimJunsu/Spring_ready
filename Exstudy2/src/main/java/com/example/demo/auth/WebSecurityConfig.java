@@ -32,11 +32,25 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated();  // 그 외 모든 요청은 인증된 사용자만 접근 가능
         // 로그인 폼 설정: 모든 사용자에게 로그인 페이지 접근 허용
         http.formLogin()
+        		.loginPage("/loginForm") // default : /login
+        		.loginProcessingUrl("/j_spring_security_check") // 시큐리티 인증 url
+        		.failureUrl("/loginError")  // default : /login?error
+        		// .defaultSuccessUrl("/")
+        		.usernameParameter("j_username") // default : j_username
+        		.passwordParameter("j_password") // default : j_password
                 .permitAll();  // 로그인 페이지는 모두 허용
         // 로그아웃 설정: 모든 사용자에게 로그아웃 허용
         http.logout()
-        		.permitAll();  // 로그아웃 페이지는 모두 허용
-        return http.build();  // SecurityFilterChain을 반환하여 설정이 적용되도록 합니다.
+        	.logoutUrl("/logout") // default
+        	.logoutSuccessUrl("/")
+        	.permitAll();  // 로그아웃 페이지는 모두 허용
+        
+        // ssl을 사용하지 않으면 true로
+        // CSRF 프로텐션 활성화, 사이트간 요청 위조
+        http.csrf()
+        	.disable();
+        
+        return http.build();
     }
 //    // 글로벌 인증 설정: 사용자 인증을 메모리 기반으로 설정 -> 스프링 시큐리티 5.X 버전
 //    @Autowired
