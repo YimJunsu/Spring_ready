@@ -1,5 +1,7 @@
 package com.example.demo.auth;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +33,7 @@ public class WebSecurityConfig {
         		.requestMatchers("/admin/**").hasRole("ADMIN")  // /admin/** 경로는 "ADMIN" 역할을 가진 사용자만 접근 허용
                 .requestMatchers("/**").permitAll()  // 루트 경로("/")는 모두 허용
                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()  // 정적 자원(css, js, img)은 모두 허용
+                .requestMatchers("/fileform/**", "/uploadOk").permitAll()
                 .requestMatchers("/guest/**").permitAll()  // guest 경로는 모두 허용
                 .anyRequest().authenticated();  // 그 외 모든 요청은 인증된 사용자만 접근 가능
         // 로그인 폼 설정: 모든 사용자에게 로그인 페이지 접근 허용
@@ -66,23 +69,36 @@ public class WebSecurityConfig {
 //            .and()
 //            .withUser("admin").password(passwordEncoder().encode("1234")).roles("ADMIN");  // "admin"이라는 사용자, 비밀번호 "1234", "ADMIN" 역할
 //    }
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        // InMemoryUserDetailsManager는 메모리 기반으로 사용자 정보를 관리하는 클래스 // 스프링 시큐리티 6.X 이상
-        // 사용자 정보가 메모리에 저장되며, 인증 시 해당 정보를 이용해 인증을 처리
-        return new InMemoryUserDetailsManager(
-                // 첫 번째 사용자(user)정의
-                User.withUsername("user") // 사용자 이름을 "user"로 설정
-                    .password(passwordEncoder().encode("1234")) // 비밀번호를 "1234"로 설정하고, passwordEncoder()를 사용해 암호화
-                    .roles("USER") // 이 사용자는 "USER" 역할을 가짐
-                    .build(), // User 객체를 빌드하여 InMemoryUserDetailsManager에 추가
-                // 두 번째 사용자(admin)정의.
-                User.withUsername("admin") // 사용자 이름을 "admin"으로 설정
-                    .password(passwordEncoder().encode("1234")) // 비밀번호를 "1234"로 설정하고, 암호화
-                    .roles("ADMIN") // 이 사용자는 "ADMIN" 역할을 가짐
-                    .build() // User 객체를 빌드하여 InMemoryUserDetailsManager에 추가
-        );
+    	//데이터베이스 설정에 따른 임시용 사용자 주석처리
+//    @Bean
+//    public InMemoryUserDetailsManager userDetailsService() {
+//        // InMemoryUserDetailsManager는 메모리 기반으로 사용자 정보를 관리하는 클래스 // 스프링 시큐리티 6.X 이상
+//        // 사용자 정보가 메모리에 저장되며, 인증 시 해당 정보를 이용해 인증을 처리
+//        return new InMemoryUserDetailsManager(
+//                // 첫 번째 사용자(user)정의
+//                User.withUsername("user") // 사용자 이름을 "user"로 설정
+//                    .password(passwordEncoder().encode("1234")) // 비밀번호를 "1234"로 설정하고, passwordEncoder()를 사용해 암호화
+//                    .roles("USER") // 이 사용자는 "USER" 역할을 가짐
+//                    .build(), // User 객체를 빌드하여 InMemoryUserDetailsManager에 추가
+//                // 두 번째 사용자(admin)정의.
+//                User.withUsername("admin") // 사용자 이름을 "admin"으로 설정
+//                    .password(passwordEncoder().encode("1234")) // 비밀번호를 "1234"로 설정하고, 암호화
+//                    .roles("ADMIN") // 이 사용자는 "ADMIN" 역할을 가짐
+//                    .build() // User 객체를 빌드하여 InMemoryUserDetailsManager에 추가
+//        );
+//    }
+    @Autowired private DataSource dataSource; // 데이터베이스 관련 변수 설정
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+    	// 암호화 비밀번호 테스트용 코드
+		System.out.println(passwordEncoder().encode("123"));
+		auth.jdbcAuthentication()
+			.dataSource(dataSource)
+			.usersByUsernameQuery("select name as userName, password,enabled" + "from user_list where name =?")
+			.authoritiesByUsernameQuery("select name as userName, authority" + "from user_list where name=?")
+			//입력한 비밀번호를 암호화해서 데이터베이스의 함화와 비교, 올바른 값인지 검증
+			.passwordEncoder(new BCryptPasswordEncoder());
     }
+    
     // 비밀번호 인코더
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

@@ -1,5 +1,9 @@
 package com.example.demo;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.JDBCStudy.ISimpleBbsDao;
 import com.example.demo.JDBCStudy.MybatisUserDao;
@@ -34,10 +39,59 @@ public class ViewController {
 	@Autowired private ISimpleBbsSerive bbsSerive;
 	//@Autowired private IBuyTicketService buyTicketService;
 	@Autowired private BuyAndLogService buyAndLogService;
+	// 파일 업로드 경로 설정
+    private static final String UPLOAD_DIR = "D:\\sourcetree_link\\Spring_ready\\Exstudy2\\src\\main\\resources\\static\\uploads";
 	@RequestMapping("/")
-	public @ResponseBody String root() throws Exception{
-		return "Spring Security";
+	public String root() throws Exception{
+		return "index";
 	}
+	@RequestMapping("/uploadform")
+	public String uploadForm() {
+		return "fileform";
+	}
+	// 파일 업로드 처리
+    @RequestMapping("/uploadOk")
+    public @ResponseBody String uploadOk(@RequestParam("file") MultipartFile file) {
+        // 업로드 파일이 비어있는지 확인
+        if (file.isEmpty()) {
+            return "파일을 선택해 주세요.";
+        }
+
+        try {
+            // 파일 이름 가져오기
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null) {
+                return "파일 이름을 가져올 수 없습니다.";
+            }
+
+            // 파일 크기 제한 설정 (10MB)
+            int maxSize = 1024 * 1024 * 10;  // 10MB
+            if (file.getSize() > maxSize) {
+                return "파일 크기가 너무 큽니다. 10MB 이하로 업로드 해 주세요.";
+            }
+
+            // static/uploads 폴더 경로 설정
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+
+            // 폴더가 없다면 생성
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // 파일을 서버에 저장
+            Path filePath = uploadPath.resolve(originalFilename);
+            file.transferTo(filePath.toFile());
+
+            // 업로드된 파일 URL 제공
+            String fileUrl = "/uploads/" + originalFilename;
+
+            return "파일 업로드 성공: " + originalFilename + " <br> 다운로드 링크: <a href='" + fileUrl + "'>파일 다운로드</a>";
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "파일 업로드 실패: " + e.getMessage();
+        }
+    }
 	// 시큐리티
 	@RequestMapping("/guest/welcome")
 	public String welcome1() {
